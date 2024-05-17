@@ -2,12 +2,12 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "BluetoothA2DPSink.h"
+//#include "BluetoothA2DPSink.h"
 //#include "AudioTools.h"
 #include <WiFi.h>
 
 
-BluetoothA2DPSink a2dp_sink;
+//BluetoothA2DPSink a2dp_sink;
 
 #define SCREEN_WIDTH 128 
 #define SCREEN_HEIGHT 64 
@@ -45,30 +45,21 @@ String input12state="LOW";
 String input13state="LOW";
 
 
-//21 and 22 I2C
-//right
-
-//I2S 27/26/25
 
 const int output23 = 23;
-const int output1  = 1;//tx0
-const int output3  = 3;//rx0
+const int output1  = 1;
+const int output3  = 3;
 const int output19 = 19;
 const int output18 = 18;
 const int output5 = 5;
-const int output17 = 17;//tx2
-const int output16 = 16;//rx2
+const int output17 = 17;
+const int output16 = 16;
 const int output4  = 4;
 const int output2  = 2;
 const int output15  = 15;
-//const int output26 = 26;
-//const int output27 = 27;
 
-//-----
-
-//const int input5=5;  //output
-const int input36=36;//vp
-const int input39=39;//vn
+const int input36=36;
+const int input39=39;
 const int input34=34;
 const int input35=35;
 const int input32=32;
@@ -281,7 +272,7 @@ void loop(){
             else if (header.indexOf("GET /5/off") >= 0) {
       //        Serial.println(F("GPIO 5 off"));
               output5State = "off";
-              digitalWrite(output2, LOW);
+              digitalWrite(output5, LOW);
             }
              else if (header.indexOf("GET /17/on") >= 0) {
       //        Serial.println(F("GPIO 17 on"));
