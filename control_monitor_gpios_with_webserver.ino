@@ -8,27 +8,62 @@ const char* password = "8765432100";
 
 WiFiServer server(80);
 
-
 String header;
 
-
-String output26State = "off";
-String output27State = "off";
+String output23State = "off";
+String output1State = "off";
+String output3State = "off";
+String output19State = "off";
+String output18State = "off";
+String output5State = "off";
+String output17State = "off";
+String output16State = "off";
 String output2State = "off";
 String output4State = "off";
-String input15state="LOW";
-String input5state="LOW";
-String input18state="LOW";
-String input19state="LOW";
+String output15State = "off";
 
-const int output2 = 2;
-const int output4 = 4;
-const int output26 = 26;
-const int output27 = 27;
-const int input15=15;
-const int input5=5;
-const int input18=18;
-const int input19=19;
+String input36state="LOW";
+String input39state="LOW";
+String input34state="LOW";
+String input35state="LOW";
+String input32state="LOW";
+String input33state="LOW";
+String input14state="LOW";
+String input12state="LOW";
+String input13state="LOW";
+
+
+//21 and 22 I2C
+//right
+
+//I2S 27/26/25
+
+const int output23 = 23;
+const int output1  = 1;//tx0
+const int output3  = 3;//rx0
+const int output19 = 19;
+const int output18 = 18;
+const int output5 = 5;
+const int output17 = 17;//tx2
+const int output16 = 16;//rx2
+const int output4  = 4;
+const int output2  = 2;
+const int output15  = 15;
+//const int output26 = 26;
+//const int output27 = 27;
+
+//-----
+
+//const int input5=5;  //output
+const int input36=36;//vp
+const int input39=39;//vn
+const int input34=34;
+const int input35=35;
+const int input32=32;
+const int input33=33;
+const int input14=14;
+const int input12=12;
+const int input13=13;
 
 
 unsigned long currentTime = millis();
@@ -38,25 +73,8 @@ unsigned long previousTime = 0;
 const long timeoutTime = 2000;
 
 void setup() {
-  Serial.begin(115200);
- 
-  pinMode(output26, OUTPUT);
-  pinMode(output27, OUTPUT);
-  pinMode(output2, OUTPUT);
-  pinMode(output4, OUTPUT);
-  //-----------------------
-  pinMode(input15,INPUT);
-   pinMode(input5,INPUT);
-    pinMode(input18,INPUT);
-     pinMode(input19,INPUT);
-  // Set outputs to LOW
-  digitalWrite(output26, LOW);
-  digitalWrite(output27, LOW);
-    digitalWrite(output2, LOW);
-  digitalWrite(output4, LOW);
   
-
-
+  Serial.begin(2000000);
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
@@ -70,13 +88,46 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
+  
+  pinMode(output23, OUTPUT);
+  pinMode(output1, OUTPUT);
+  pinMode(output3, OUTPUT);
+  pinMode(output19, OUTPUT);
+  pinMode(output18, OUTPUT);
+  pinMode(output5, OUTPUT);
+  pinMode(output17, OUTPUT);
+  pinMode(output16, OUTPUT);
+  pinMode(output4, OUTPUT);
+  pinMode(output2, OUTPUT);
+  pinMode(output15, OUTPUT);
+  //-----------------------
+
+ 
+ pinMode(input36,INPUT);
+ pinMode(input39,INPUT);
+ pinMode(input34,INPUT);
+ pinMode(input35,INPUT);
+ pinMode(input32,INPUT);
+ pinMode(input33,INPUT);
+ pinMode(input14,INPUT);
+ pinMode(input12,INPUT);
+ pinMode(input13,INPUT);
+
+  
+
 }
 
 void loop(){
-  input15state=digitalRead(input15) ? "HIGH" : "LOW";
-  input5state=digitalRead(input5) ? "HIGH" : "LOW";
-  input18state=digitalRead(input18) ? "HIGH" : "LOW";
-  input19state=digitalRead(input19) ? "HIGH" : "LOW";
+  
+  input36state=digitalRead(input36) ? "HIGH" : "LOW";
+  input39state=digitalRead(input39) ? "HIGH" : "LOW";
+  input34state=digitalRead(input34) ? "HIGH" : "LOW";
+  input35state=digitalRead(input35) ? "HIGH" : "LOW";
+  input32state=digitalRead(input32) ? "HIGH" : "LOW";
+  input33state=digitalRead(input33) ? "HIGH" : "LOW";
+  input14state=digitalRead(input14) ? "HIGH" : "LOW";
+  input12state=digitalRead(input12) ? "HIGH" : "LOW";
+  input13state=digitalRead(input13) ? "HIGH" : "LOW";
   
   WiFiClient client = server.available();   
 
@@ -101,47 +152,128 @@ void loop(){
             client.println("Connection: close");
             client.println();
 
-            
+          
 
-            if (header.indexOf("GET /26/on") >= 0) {
-              Serial.println("GPIO 26 on");
-              output26State = "on";
-              digitalWrite(output26, HIGH);
-            } else if (header.indexOf("GET /26/off") >= 0) {
-              Serial.println("GPIO 26 off");
-              output26State = "off";
-              digitalWrite(output26, LOW);
-            } else if (header.indexOf("GET /27/on") >= 0) {
-              Serial.println("GPIO 27 on");
-              output27State = "on";
-              digitalWrite(output27, HIGH);
-            } else if (header.indexOf("GET /27/off") >= 0) {
-              Serial.println("GPIO 27 off");
-              output27State = "off";
-              digitalWrite(output27, LOW);
-            }//for led2
-            else if (header.indexOf("GET /2/on") >= 0) {
+            if (header.indexOf("GET /23/on") >= 0) {
+              Serial.println("GPIO 23 on");
+              output23State = "on";
+              digitalWrite(output23, HIGH);
+            }
+            
+             else if (header.indexOf("GET /23/off") >= 0) {
+              Serial.println("GPIO 23 off");
+              output1State = "off";
+              digitalWrite(output23, LOW); 
+             }
+              else if (header.indexOf("GET /2/on") >= 0) {
               Serial.println("GPIO 2 on");
               output2State = "on";
               digitalWrite(output2, HIGH);
-            } else if (header.indexOf("GET /2/off") >= 0) {
+            }
+                else if (header.indexOf("GET /2/off") >= 0) {
               Serial.println("GPIO 2 off");
               output2State = "off";
               digitalWrite(output2, LOW);
+               
+          
             }
-             else if (header.indexOf("GET /4/on") >= 0) {
+            else if (header.indexOf("GET /1/on") >= 0) {
+              Serial.println("GPIO 1 on");
+              output1State = "on";
+              digitalWrite(output3, HIGH);
+            } 
+              else if (header.indexOf("GET /1/off") >= 0) {
+              Serial.println("GPIO  off");
+              output1State = "off";
+              digitalWrite(output1, LOW);
+              }
+             
+            else if (header.indexOf("GET /3/on") >= 0) {
+              Serial.println("GPIO 3 on");
+              output3State = "on";
+              digitalWrite(output3, HIGH);
+            } 
+              else if (header.indexOf("GET /3/off") >= 0) {
+              Serial.println("GPIO  off");
+              output3State = "off";
+              digitalWrite(output3, LOW);
+              }
+              else if (header.indexOf("GET /19/on") >= 0) {
+              Serial.println("GPIO 19 on");
+              output19State = "on";
+              digitalWrite(output19, HIGH);
+            }
+              
+            else if (header.indexOf("GET /19/off") >= 0) {
+              Serial.println("GPIO 19 off");
+              output19State = "off";
+              digitalWrite(output19, LOW);
+            }//for led2
+            else if (header.indexOf("GET /18/on") >= 0) {
+              Serial.println("GPIO 18 on");
+              output18State = "on";
+              digitalWrite(output18, HIGH);
+            }
+            else if (header.indexOf("GET /18/off") >= 0) {
+              Serial.println("GPIO 18 off");
+              output18State = "off";
+              digitalWrite(output18, LOW);
+            }
+            else if (header.indexOf("GET /5/on") >= 0) {
+              Serial.println("GPIO 5 on");
+              output5State = "on";
+              digitalWrite(output5, HIGH);
+            }
+             
+            else if (header.indexOf("GET /5/off") >= 0) {
+              Serial.println("GPIO 5 off");
+              output5State = "off";
+              digitalWrite(output2, LOW);
+            }
+             else if (header.indexOf("GET /17/on") >= 0) {
+              Serial.println("GPIO 17 on");
+              output17State = "on";
+              digitalWrite(output17, HIGH);
+             
+            } else if (header.indexOf("GET /17/off") >= 0) {
+              Serial.println("GPIO 17 off");
+              output17State = "off";
+              digitalWrite(output17, LOW);
+            }
+               else if (header.indexOf("GET /16/on") >= 0) {
+              Serial.println("GPIO 16 on");
+              output16State = "on";
+              digitalWrite(output16, HIGH);
+             
+            } else if (header.indexOf("GET /16/off") >= 0) {
+              Serial.println("GPIO 16 off");
+              output16State = "off";
+              digitalWrite(output16, LOW);
+            }
+                  else if (header.indexOf("GET /4/on") >= 0) {
               Serial.println("GPIO 4 on");
               output4State = "on";
               digitalWrite(output4, HIGH);
+             
             } else if (header.indexOf("GET /4/off") >= 0) {
               Serial.println("GPIO 4 off");
-              output4State = "off";
+              output17State = "off";
               digitalWrite(output4, LOW);
+            }
+                  else if (header.indexOf("GET /15/on") >= 0) {
+              Serial.println("GPIO 15 on");
+              output15State = "on";
+              digitalWrite(output15, HIGH);
+             
+            }  else if (header.indexOf("GET /15/off") >= 0) {
+              Serial.println("GPIO 15 off");
+              output15State = "off";
+              digitalWrite(output15, LOW);
             }
             // Display the HTML web page
             client.println("<!DOCTYPE html><html>");
             client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            client.println("<meta http-equiv=\"refresh\" content=\"3\">"); 
+            client.println("<meta http-equiv=\"refresh\" content=\"7\">"); 
             client.println("<link rel=\"icon\" href=\"data:,\">");
             
             client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
@@ -151,24 +283,7 @@ void loop(){
             
             // Web Page Heading
             client.println("<body><h1>ESP32 Web Server</h1>");
-         
-            client.println("<p>GPIO 26 - State " + output26State + "</p>");
-            
-            if (output26State=="off") {
-              client.println("<p><a href=\"/26/on\"><button class=\"button\">ON</button></a></p>");
-            } else {
-              client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
-            } 
-               
-
-            client.println("<p>GPIO 27 - State " + output27State + "</p>");
-           
-            if (output27State=="off") {
-              client.println("<p><a href=\"/27/on\"><button class=\"button\">ON</button></a></p>");
-            } else {
-              client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
-            }
-            // displaying state of led2
+                 //2 displaying state of led2
             client.println("<p>GPIO 2 - State " + output2State + "</p>");
             
             if (output2State=="off") {
@@ -176,7 +291,75 @@ void loop(){
             } else {
               client.println("<p><a href=\"/2/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
-            //------
+         //23
+            client.println("<p>GPIO 23 - State " + output2State + "</p>");
+            
+            if (output23State=="off") {
+              client.println("<p><a href=\"/23/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/23/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+         //1
+            client.println("<p>GPIO 1 - State " + output2State + "</p>");
+            
+            if (output1State=="off") {
+              client.println("<p><a href=\"/1/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/1/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+          //3
+             client.println("<p>GPIO 3 - State " + output2State + "</p>");
+            
+            if (output3State=="off") {
+              client.println("<p><a href=\"/3/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/3/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+
+           //19
+              client.println("<p>GPIO 19 - State " + output2State + "</p>");
+            
+            if (output19State=="off") {
+              client.println("<p><a href=\"/19/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/19/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+            //18
+               client.println("<p>GPIO 18 - State " + output2State + "</p>");
+            
+            if (output18State=="off") {
+              client.println("<p><a href=\"/18/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/18/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+            //5
+               client.println("<p>GPIO 5 - State " + output2State + "</p>");
+            
+            if (output5State=="off") {
+              client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+            //17
+
+               client.println("<p>GPIO 17 - State " + output2State + "</p>");
+            
+            if (output17State=="off") {
+              client.println("<p><a href=\"/17/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/17/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+             //16
+
+               client.println("<p>GPIO 16 - State " + output2State + "</p>");
+            
+            if (output16State=="off") {
+              client.println("<p><a href=\"/16/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/16/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+
+           //4------
 
             client.println("<p>GPIO 4 - State " + output4State + "</p>");
      
@@ -186,31 +369,73 @@ void loop(){
               client.println("<p><a href=\"/4/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
 
+       
+
+            //15------
+
+            client.println("<p>GPIO 15 - State " + output4State + "</p>");
+     
+            if (output15State=="off") {
+              client.println("<p><a href=\"/15/on\"><button class=\"button\">ON</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/15/off\"><button class=\"button button2\">OFF</button></a></p>");
+            }
+
+            
             //
             client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
-            client.print("<p>Input Pin 15 - State: ");
-            client.print(input15state);
+            client.print("<p>Input Pin 36 - State: ");
+            client.print(input36state);
             client.println("</p>");
             client.println("</body></html>");
 
             client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
-            client.print("<p>Input Pin 5 - State: ");
-            client.print(input5state);
+            client.print("<p>Input Pin 39 - State: ");
+            client.print(input39state);
             client.println("</p>");
             client.println("</body></html>");
 
             client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
-            client.print("<p>Input Pin 18 - State: ");
-            client.print(input18state);
+            client.print("<p>Input Pin 34 - State: ");
+            client.print(input34state);
             client.println("</p>");
             client.println("</body></html>");
             
             client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
-            client.print("<p>Input Pin 19 - State: ");
-            client.print(input19state);
+            client.print("<p>Input Pin 35 - State: ");
+            client.print(input35state);
+            client.println("</p>");
+            client.println("</body></html>");
+
+            client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
+            client.print("<p>Input Pin 32 - State: ");
+            client.print(input32state);
             client.println("</p>");
             client.println("</body></html>");
             
+            client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
+            client.print("<p>Input Pin 33 - State: ");
+            client.print(input33state);
+            client.println("</p>");
+            client.println("</body></html>");
+
+            client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
+            client.print("<p>Input Pin 14 - State: ");
+            client.print(input14state);
+            client.println("</p>");
+            client.println("</body></html>");
+
+            client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
+            client.print("<p>Input Pin 12 - State: ");
+            client.print(input12state);
+            client.println("</p>");
+            client.println("</body></html>");
+
+            client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
+            client.print("<p>Input Pin 13 - State: ");
+            client.print(input13state);
+            client.println("</p>");
+            client.println("</body></html>");
  
             client.println();
  
@@ -222,7 +447,7 @@ void loop(){
           currentLine += c;      
         }
       }
-    }
+  }  
   
     header = "";
 
