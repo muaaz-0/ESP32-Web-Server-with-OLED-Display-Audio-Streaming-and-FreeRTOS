@@ -5,7 +5,7 @@ This project demonstrates how to create a web server on an ESP32, display inform
 
 # **Features**
 
-**Web Server :** Control multiple GPIO pins and monitor their states through a web interface.
+**Web Server:** Control multiple GPIO pins and monitor their states through a web interface.
 
 **OLED Display:** Display the states of GPIO pins on an OLED screen.
 
@@ -15,7 +15,7 @@ This project demonstrates how to create a web server on an ESP32, display inform
 
 
 ## **Libraries Used**
-- Arduino IDE
+- Arduino
 
 - Adafruit GFX Library
 
@@ -30,7 +30,7 @@ This project demonstrates how to create a web server on an ESP32, display inform
 
 **Output pins:** 
 
-The following pins has been configured as Ouput, and will be controlled through web server using On/OFF buttons
+The following pins have been configured as Output and will be controlled through the web server using On/OFF buttons
 
 ```bash
  
@@ -48,7 +48,7 @@ const int output15  = 15;
 ```
 
 **Output pins:**
-Similarly the following pins have been configured as input.
+Similarly, the following pins have been configured as input.
 ```bash
 const int input36=36;
 const int input39=39;
@@ -61,7 +61,7 @@ const int input12=12;
 const int input13=13;
 ```
 ## **Web Server**
-The web server is created using an HTML script with buttons to control and monitor the GPIO pins. For ouput pins buttons have created showing the ON or OFF state. Also state of input pins (HIGH or LOW) is displayed on the web page. The web page refreshes every 7 seconds to update the states of the pins using a html tag:
+The web server is created using an HTML script with buttons to control and monitor the GPIO pins. For output pins buttons have been created showing the ON or OFF state. Also, state of input pins (HIGH or LOW) is displayed on the web page. The web page refreshes every 7 seconds to update the states of the pins using a HTML tag:
 
 ```bash
  client.println("<meta http-equiv=\"refresh\" content=\"7\">");
@@ -80,7 +80,7 @@ Audio is streamed using the MAX98357 module, which communicates via the I2S prot
 ## **OLED Display**
 The state of each GPIO pin is also displayed on the OLED screen. Whenever the state of a GPIO pin is changed through the web server, it is updated on the OLED display.
 ## **RTOS for Tasks** 
-FreeRTOS is used to manage multiple tasks running concurrently. Two tasks with the same priority are created to handle the radio player and the web server simultaneously. Bothe the tasks run in a round robin way to give the ouput.
+FreeRTOS is used to manage multiple tasks running concurrently. Two tasks with the same priority are created to handle the radio player and the web server simultaneously. Both the tasks run in a round-robin way to give the output.
 
 ```bash
  
