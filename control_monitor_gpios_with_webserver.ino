@@ -486,7 +486,7 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
-  TaskDelay( 2000/ portTICK_PERIOD_MS);
+  vTaskDelay( 2000/ portTICK_PERIOD_MS);
   
   display.clearDisplay();
 
