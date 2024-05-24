@@ -104,7 +104,7 @@ void task_Speaker(void *parameter){
 void task_Web(void *parameter){
   
  while(1){
-
+vTaskDelay( 2000/ portTICK_PERIOD_MS);
     //chk in/out
   input36state=digitalRead(input36) ? "HIGH" : "LOW";
   input39state=digitalRead(input39) ? "HIGH" : "LOW";
