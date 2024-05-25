@@ -5,41 +5,33 @@
 #include "Arduino.h"
 #include "Audio.h"
 
-//----
-
-
 #if CONFIG_FREERTOS_UNICORE
 static const BaseType_t app_cpu=0;
 #else 
 static const BaseType_t app_cpu=1;
 #endif
 
-static TaskHandle_t task_Speaker_Handle= NULL ;
-static TaskHandle_t task_Web_Handle= NULL ;
-
-
-//------
 #define I2S_DOUT  27
 #define I2S_BCLK  26
 #define I2S_LRC   25
 
-Audio audio;
-
-
-
 #define SCREEN_WIDTH 128 
 #define SCREEN_HEIGHT 64 
 
+//creating object for Audio and OLED display
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Audio audio;
+WiFiServer server(80);
 
 const char* ssid = "Mr";
 const char* password = "8765432100";
 
-
-WiFiServer server(80);
+static TaskHandle_t task_Speaker_Handle= NULL ;
+static TaskHandle_t task_Web_Handle= NULL ;
 
 String header;
 
+//Initializing states of ouput pins
 String output23State = "off";
 String output1State = "off";
 String output3State = "off";
@@ -52,6 +44,7 @@ String output2State = "off";
 String output4State = "off";
 String output15State = "off";
 
+//initializing states of input pins
 String input36state="LOW";
 String input39state="LOW";
 String input34state="LOW";
@@ -62,8 +55,7 @@ String input14state="LOW";
 String input12state="LOW";
 String input13state="LOW";
 
-
-
+//Assigning pins as ouput
 const int output23 = 23;
 const int output1  = 1;
 const int output3  = 3;
@@ -76,6 +68,7 @@ const int output4  = 4;
 const int output2  = 2;
 const int output15  = 15;
 
+//Assigning pins as input
 const int input36=36;
 const int input39=39;
 const int input34=34;
@@ -86,25 +79,22 @@ const int input14=14;
 const int input12=12;
 const int input13=13;
 
-
 unsigned long currentTime = millis();
-
 unsigned long previousTime = 0; 
-
 const long timeoutTime = 2000;
 
+//Function to run audio stream through internet
 void task_Speaker(void *parameter){
   
- while(1){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-//audio
+ while(1){
   audio.loop();
   }
 }
 
+// Function to create web server and showing states of LEDs on OLED
 void task_Web(void *parameter){
-  
  while(1){
-vTaskDelay( 2000/ portTICK_PERIOD_MS);
+    vTaskDelay( 2000/ portTICK_PERIOD_MS);
     //chk in/out
   input36state=digitalRead(input36) ? "HIGH" : "LOW";
   input39state=digitalRead(input39) ? "HIGH" : "LOW";
@@ -132,51 +122,40 @@ vTaskDelay( 2000/ portTICK_PERIOD_MS);
         if (c == '\n') {               
          
        
-          if (currentLine.length() == 0) {
-            
+          if (currentLine.length() == 0) {           
             client.println(F("HTTP/1.1 200 OK"));
             client.println(F("Content-type:text/html"));
             client.println(F("Connection: close"));
             client.println();
 
-          
-
-            if (header.indexOf("GET /23/on") >= 0) {
-            //  Serial.println(F("GPIO 23 on"));
-            
+            if (header.indexOf("GET /23/on") >= 0) {           
               output23State = "on";
               digitalWrite(output23, HIGH);
             }
             
-             else if (header.indexOf("GET /23/off") >= 0) {
-           //   Serial.println(F("GPIO 23 off"));
-            
+             else if (header.indexOf("GET /23/off") >= 0) {         
               output23State = "off";
               digitalWrite(output23, LOW); 
              }
               else if (header.indexOf("GET /2/on") >= 0) {
-          //    Serial.println(F("GPIO 2 on"));
-          display.clearDisplay();
-          display.setCursor(0, 10);
-           display.println(F("GPIO 2 on"));
-    display.display();
+              display.clearDisplay();
+              display.setCursor(0, 10);
+              display.println(F("GPIO 2 on"));
+              display.display();
     
               output2State = "on";
               digitalWrite(output2, HIGH);
             }
                 else if (header.indexOf("GET /2/off") >= 0) {
-          //    Serial.println(F("GPIO 2 off"));
-          display.clearDisplay();
-          display.setCursor(0, 10);
-          display.println(F("GPIO 2 off"));
-    display.display();
+              display.clearDisplay();
+              display.setCursor(0, 10);
+              display.println(F("GPIO 2 off"));
+              display.display();
               output2State = "off";
-              digitalWrite(output2, LOW);
-               
+              digitalWrite(output2, LOW);          
           
             }
             else if (header.indexOf("GET /1/on") >= 0) {
-          //    Serial.println(F("GPIO 1 on"));
               output1State = "on";
               digitalWrite(output3, HIGH);
             } 
@@ -187,84 +166,68 @@ vTaskDelay( 2000/ portTICK_PERIOD_MS);
               }
              
             else if (header.indexOf("GET /3/on") >= 0) {
-         //     Serial.println(F("GPIO 3 on"));
               output3State = "on";
               digitalWrite(output3, HIGH);
             } 
               else if (header.indexOf("GET /3/off") >= 0) {
-         //     Serial.println(F("GPIO  off"));
               output3State = "off";
               digitalWrite(output3, LOW);
               }
               else if (header.indexOf("GET /19/on") >= 0) {
-          //    Serial.println(F("GPIO 19 on"));
               output19State = "on";
               digitalWrite(output19, HIGH);
             }
               
             else if (header.indexOf("GET /19/off") >= 0) {
-        //      Serial.println(F("GPIO 19 off"));
               output19State = "off";
               digitalWrite(output19, LOW);
             }//for led2
             else if (header.indexOf("GET /18/on") >= 0) {
-         //     Serial.println(F("GPIO 18 on"));
               output18State = "on";
               digitalWrite(output18, HIGH);
             }
             else if (header.indexOf("GET /18/off") >= 0) {
-        //      Serial.println(F("GPIO 18 off"));
               output18State = "off";
               digitalWrite(output18, LOW);
             }
             else if (header.indexOf("GET /5/on") >= 0) {
-        //      Serial.println(F("GPIO 5 on"));
               output5State = "on";
               digitalWrite(output5, HIGH);
             }
              
             else if (header.indexOf("GET /5/off") >= 0) {
-      //        Serial.println(F("GPIO 5 off"));
               output5State = "off";
               digitalWrite(output5, LOW);
             }
              else if (header.indexOf("GET /17/on") >= 0) {
-      //        Serial.println(F("GPIO 17 on"));
               output17State = "on";
               digitalWrite(output17, HIGH);
              
             } else if (header.indexOf("GET /17/off") >= 0) {
-      //        Serial.println(F("GPIO 17 off"));
               output17State = "off";
               digitalWrite(output17, LOW);
             }
                else if (header.indexOf("GET /16/on") >= 0) {
-      //        Serial.println(F("GPIO 16 on"));
               output16State = "on";
               digitalWrite(output16, HIGH);
              
             } else if (header.indexOf("GET /16/off") >= 0) {
-     //         Serial.println(F("GPIO 16 off"));
               output16State = "off";
               digitalWrite(output16, LOW);
             }
                   else if (header.indexOf("GET /4/on") >= 0) {
-     //         Serial.println(F("GPIO 4 on"));
               output4State = "on";
               digitalWrite(output4, HIGH);
              
             } else if (header.indexOf("GET /4/off") >= 0) {
-    //          Serial.println(F("GPIO 4 off"));
               output4State = "off";
               digitalWrite(output4, LOW);
             }
                   else if (header.indexOf("GET /15/on") >= 0) {
-    //          Serial.println(F("GPIO 15 on"));
               output15State = "on";
               digitalWrite(output15, HIGH);
              
             }  else if (header.indexOf("GET /15/off") >= 0) {
-   //           Serial.println(F("GPIO 15 off"));
               output15State = "off";
               digitalWrite(output15, LOW);
             }
@@ -281,9 +244,10 @@ vTaskDelay( 2000/ portTICK_PERIOD_MS);
             
             // Web Page Heading
             client.println("<body><h1>ESP32 Web Server</h1>");
-                 //2 displaying state of led2
+            //2 displaying state of led2
             client.println("<p>GPIO 2 - State " + output2State + "</p>");
             
+            //butoon dispaly for gpio2
             if (output2State=="off") {
               client.println("<p><a href=\"/2/on\"><button class=\"button\">ON</button></a></p>");
             } else {
@@ -378,9 +342,8 @@ vTaskDelay( 2000/ portTICK_PERIOD_MS);
             } else {
               client.println("<p><a href=\"/15/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
-
-            
-            //
+                       
+            //showing states of input on web server
             client.println("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head><body>");
             client.print("<p>Input Pin 36 - State: ");
             client.print(input36state);
@@ -459,9 +422,6 @@ vTaskDelay( 2000/ portTICK_PERIOD_MS);
   }
 }
 
-
-  
-
 void setup() {
   
   Serial.begin(1000000);
@@ -476,17 +436,15 @@ void setup() {
    audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
    audio.setVolume(90);
 
-   //connect to internet
+   //multiple links are available for media connection over internet
   //audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3");
   //audio.connecttohost("mediaserv30.live-nect MAX98357 I2S Amplifier Module
   //audio.connecttohost("www.surfmusic.de/m3u/100-5-das-hitradio,4529.m3u");
   //audio.connecttohost("stream.1a-webradio.de/deutsch/mp3-128/vtuner-1a");
   //audio.connecttohost("www.antenne.de/webradio/antenne.m3u");
   audio.connecttohost("0n-80s.radionetz.de:8000/0n-70s.mp3");
-//    audio.connecttohost("https://www.youtube.com/watch?v=95yUbClyf3E&list=PLXyB2ILBXW5FLc7j2hLcX6sAGbmH0JxX8&index=3");
+  //audio.connecttohost("https://www.youtube.com/watch?v=95yUbClyf3E&list=PLXyB2ILBXW5FLc7j2hLcX6sAGbmH0JxX8&index=3");
 
-   
- 
 //for OLED init
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
     Serial.println(F("SSD1306 allocation failed"));
@@ -499,19 +457,15 @@ void setup() {
   display.setTextSize(2);
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
-
-   
-
-     
-     //wifi conn
+   display.println(F("Welcome"));
+              display.display();
+     //wifi connection
   Serial.println("");
   Serial.println(F("WiFi connected."));
   Serial.println(F("IP address: "));
   Serial.println(WiFi.localIP());
   server.begin();
 
-  
-  
   pinMode(output23, OUTPUT);
   pinMode(output1, OUTPUT);
   pinMode(output3, OUTPUT);
