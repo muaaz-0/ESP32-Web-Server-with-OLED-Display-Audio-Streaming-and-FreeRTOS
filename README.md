@@ -61,7 +61,7 @@ const int input12=12;
 const int input13=13;
 ```
 ## **Web Server**
-The web server is created using an HTML script with buttons to control and monitor the GPIO pins. For output pins buttons have been created showing the ON or OFF state. Also, state of input pins (HIGH or LOW) is displayed on the web page. The web page refreshes every 7 seconds to update the states of the pins using an HTML tag:
+The web server is created using an HTML script with buttons to control and monitor the GPIO pins. For output pins buttons have been created showing the ON or OFF state. Also, the state of input pins (HIGH or LOW) is displayed on the web page. The web page refreshes every 7 seconds to update the states of the pins using an HTML tag:
 
 ```bash
  client.println("<meta http-equiv=\"refresh\" content=\"7\">");
@@ -69,6 +69,7 @@ The web server is created using an HTML script with buttons to control and monit
 ```
 ## **Audio Streaming**
 Audio is streamed using the MAX98357 module, which communicates via the I2S protocol. The I2S pins are configured as follows:
+Note: Don't forget to connect the gain to the ground.
 
 ```bash
  
