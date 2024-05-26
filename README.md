@@ -26,6 +26,7 @@ This project demonstrates how to create a web server on an ESP32, display inform
 - Audio Library
 
 - FreeRTOS
+Note: You can use this audio library ESP32 Audio I2S Library
 ## **Pin Configuration**
 
 **Output pins:** 
